@@ -1,4 +1,4 @@
-# Autor
+# Author
 https://github.com/tmaier/docker-compose
 
 ## Change for me
