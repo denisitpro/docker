@@ -1,26 +1,28 @@
 FROM centos:7
 
+RUN yum remove git -y
 RUN yum update -y
+RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+RUN yum install -y  https://centos7.iuscommunity.org/ius-release.rpm
 RUN yum install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
                    make cmake \
-                   git \
+                   git2u-all \
                    curl \
                    wget \
                    yum-utils device-mapper-persistent-data lvm2 \
                    pkgconfig \
                    sudo \
                    automake autoconf \
+                   docker-ce \
+                   docker-ce-cli \
+                   openssl-devel \
+                   bzip2-devel \
+                   libffi-devel \
                    yum-utils rpm-build && \
     yum clean all
 
-RUN yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-RUN yum install -y docker-ce docker-ce-cli
-
-RUN yum install -y gcc openssl-devel bzip2-devel libffi-devel
-RUN wget https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
-RUN tar xzf Python-3.7.7.tgz
-RUN ls -la
+RUN wget https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz && tar xzf Python-3.7.7.tgz
 RUN Python-3.7.7/configure --enable-optimizations
 RUN make altinstall
 
