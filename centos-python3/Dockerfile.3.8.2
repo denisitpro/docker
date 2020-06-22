@@ -1,9 +1,10 @@
 FROM centos:7
 
-RUN yum remove git -y && \
+RUN sed  's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf > /etc/yum/pluginconf.d/fastestmirror.conf
+RUN yum clean all && yum remove git -y && \
     yum update -y && \
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
-    yum install -y  https://centos7.iuscommunity.org/ius-release.rpm && \
+    yum install -y  https://repo.ius.io/ius-release-el7.rpm && \
     yum install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
                    make cmake \
