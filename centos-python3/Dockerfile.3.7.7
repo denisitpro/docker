@@ -4,11 +4,9 @@ RUN sed  's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf > /et
 RUN yum clean all && yum remove git -y && \
     yum update -y && \
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
-    yum install -y  https://repo.ius.io/ius-release-el7.rpm && \
     yum install -y gcc gcc-c++ \
                    libtool libtool-ltdl \
                    make cmake \
-                   git2u-all \
                    curl \
                    wget \
                    rsync \
@@ -25,6 +23,21 @@ RUN yum clean all && yum remove git -y && \
                    rpm-build && \
     yum clean all
 
+RUN yum -y groupinstall "Development Tools" && \
+    yum install -y gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel wget && \
+    yum remove git -y
+
+RUN wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.28.0.tar.gz && \
+    tar xzf git-2.28.0.tar.gz
+
+WORKDIR	git-2.28.0
+RUN make configure && ./configure --prefix=/usr/local && \
+    make all && \
+    make install && \
+    rm -rf git-2.28.0 && \
+    rm -f git-2.28.0.tar.gz
+
+WORKDIR	/
 RUN wget https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz && \
     tar xzf Python-3.7.7.tgz && \
     Python-3.7.7/configure --enable-optimizations && \
