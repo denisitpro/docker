@@ -24,7 +24,7 @@ RUN yum clean all && yum remove git -y && \
     yum clean all
 
 RUN yum -y groupinstall "Development Tools" && \
-    yum install -y gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel wget && \
+    yum install -y curl-devel expat-devel gettext-devel openssl-devel perl-CPAN perl-devel zlib-devel wget && \
     yum remove git -y
 
 RUN wget https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.28.0.tar.gz && \
