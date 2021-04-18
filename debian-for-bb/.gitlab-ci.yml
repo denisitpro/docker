@@ -1,0 +1,47 @@
+variables:
+  COMPANY_NAME: company_name
+#  GIT_SUBMODULE_STRATEGY: normal
+  REGISTRY_PROJECT: company_name/forks
+###  for docker-didn 19 - https://gitlab.com/gitlab-org/gitlab-runner/issues/4501
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ''
+
+
+stages:
+  - docker_build_artefacts
+
+build_debian10_make:
+  stage: docker_build_artefacts
+  tags:
+    - docker20_nocache
+  before_script:
+    - docker login -u $REGISTRY_PUSH_LOGIN -p $REGISTRY_PASS
+    - apk add wget
+  script:
+    - wget https://github.com/debuerreotype/docker-debian-artifacts/raw/38b06b2a8a31d805359f1ca3ef5f3203b8a536a7/buster/rootfs.tar.xz
+    - >
+      docker build -f dockerfiles/dockerfile-debian10-make-docker
+      --tag $REGISTRY_PROJECT:debian10_make
+      . --no-cache
+    - docker push $REGISTRY_PROJECT:debian10_make
+  only:
+    changes:
+      - dockerfiles/dockerfile-debian10-make-docker
+
+build_debian9_make:
+  stage: docker_build_artefacts
+  tags:
+    - docker20_nocache
+  before_script:
+    - docker login -u $REGISTRY_PUSH_LOGIN -p $REGISTRY_PASS
+    - apk add wget
+  script:
+    - wget https://github.com/debuerreotype/docker-debian-artifacts/raw/38b06b2a8a31d805359f1ca3ef5f3203b8a536a7/stretch/rootfs.tar.xz
+    - >
+      docker build -f dockerfiles/dockerfile-debian9-make-docker
+      --tag $REGISTRY_PROJECT:debian9_make
+      . --no-cache
+    - docker push $REGISTRY_PROJECT:debian9_make
+  only:
+    changes:
+      - dockerfiles/dockerfile-debian9-make-docker
