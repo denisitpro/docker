@@ -1,26 +1,33 @@
-[root@t1 telega]# cat  docker-compose.yml 
-version: '3'
+version: '3.7'
 
-# Uncoment line if you want make any custom changes, if you want apply any environment change, uncoment "environment:" section too
+networks:
+  mtproxy:
+    driver: bridge
+    name: mtproxy
+    attachable: true
 
 services:
-    telegram-proxy:
-        image: telegrammessenger/proxy:latest
-        ports:
-          - "443:443" #Proxy port
-          #- "2398:2398" # ONLY FOR TESTING - Show proxy stats on port 2398 outside of docker
-        volumes:
-           - "proxy-config:/data"
-#        restart: unless-stopped
-        hostname: telega-container
-        env_file:
-           - ./config.env
-        container_name: telega1
-        ulimits:
-#          nproc: 65535
-          nofile:
-            soft: 98304
-            hard: 98304
-volumes:
-        proxy-config:
-                external: true
+  mtproxy:
+    image: telegrammessenger/proxy:1.4
+    container_name: mtproxy
+    hostname: mtproxy
+    ulimits:
+        nofile:
+          soft: 98304
+          hard: 98304
+    networks:
+      - mtproxy
+    ports:
+      - 443:443
+    volumes:
+      - "./proxy-config:/data"
+    environment:
+#      - SECRET_COUNT=16 # for generate
+### after generate
+      - SECRET=a5300dda6ca704e8d19eeeeb82a85ee2
+    restart: always
+    logging:
+      driver: json-file
+      options:
+        max-size: 100m
+        max-file: '2'
